@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Countries Details</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row" id="appendData"></div>
+    </div>
+
+    <script>
+      let currentCard = null;
+
+      const getData = () => {
+        fetch("https://restcountries.com/v2/all")
+          .then((response) => response.json())
+          .then((data) => {
+            data.forEach((value) => {
+              let wrapper = document.createElement("div");
+              wrapper.className = "row mb-3";
+
+              // Left container for the flag
+              let flagContainer = document.createElement("div");
+              flagContainer.className = "col-md-4";
+
+              let Flagimg = document.createElement("img");
+              Flagimg.className = "img-fluid";
+              Flagimg.src = value.flag;
+
+              flagContainer.appendChild(Flagimg);
+
+              // Right container for details
+              let detailsContainer = document.createElement("div");
+              detailsContainer.className = "col-md-8";
+
+              wrapper.appendChild(flagContainer);
+              wrapper.appendChild(detailsContainer);
+
+              let countryDetails = document.createElement("div");
+              countryDetails.id = value.alpha3Code; // Use country code as id
+
+              detailsContainer.appendChild(countryDetails);
+
+              wrapper.addEventListener("click", function () {
+                displayCountryDetails(value, countryDetails);
+              });
+
+              document.getElementById("appendData").appendChild(wrapper);
+            });
+          });
+      };
+
+      const displayCountryDetails = (country, countryDetails) => {
+        if (currentCard === country) {
+          countryDetails.innerHTML = "";
+          currentCard = null;
+        } else {
+          countryDetails.innerHTML = ""; // Clear previous details
+
+          let detailsList = document.createElement("ul");
+          detailsList.className = "list-group";
+
+          let CountryName = document.createElement("li");
+          CountryName.className = "list-group-item";
+          CountryName.textContent = `Country Name: ${country.name}`;
+
+          let callingCode = document.createElement("li");
+          callingCode.className = "list-group-item";
+          callingCode.textContent = `Calling Codes: ${country.callingCodes.join(
+            ", "
+          )}`;
+
+          let capitalCity = document.createElement("li");
+          capitalCity.className = "list-group-item";
+          capitalCity.textContent = `Capital City: ${country.capital}`;
+
+          let reg = document.createElement("li");
+          reg.className = "list-group-item";
+          reg.textContent = `Region: ${country.region}`;
+
+          let subReg = document.createElement("li");
+          subReg.className = "list-group-item";
+          subReg.textContent = `Sub Region: ${country.subregion}`;
+
+          let timeZone = document.createElement("li");
+          timeZone.className = "list-group-item";
+          timeZone.textContent = `Time Zone: ${country.timezones}`;
+
+          let curr = document.createElement("li");
+          curr.className = "list-group-item";
+          curr.textContent = `Currencies: ${country.currencies
+            .map((currency) => currency.name)
+            .join(", ")}`;
+
+          let lang = document.createElement("li");
+          lang.className = "list-group-item";
+          lang.textContent = `Languages: ${country.languages
+            .map((language) => language.name)
+            .join(", ")}`;
+
+          let flaglist = document.createElement("li");
+          flaglist.className = "list-group-item";
+          let flagIm = document.createElement("img");
+          flagIm.src = country.flag;
+          flagIm.style.width = "80px";
+          flaglist.appendChild(flagIm);
+
+          detailsList.appendChild(CountryName);
+          detailsList.appendChild(callingCode);
+          detailsList.appendChild(capitalCity);
+          detailsList.appendChild(reg);
+          detailsList.appendChild(subReg);
+          detailsList.appendChild(timeZone);
+          detailsList.appendChild(curr);
+          detailsList.appendChild(lang);
+          detailsList.appendChild(flaglist);
+
+          countryDetails.appendChild(detailsList);
+          currentCard = country;
+        }
+      };
+
+      getData();
+    </script>
+  </body>
+</html>
